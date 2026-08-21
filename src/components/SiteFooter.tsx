@@ -1,0 +1,30 @@
+import Link from "next/link";
+
+export function SiteFooter() {
+  return (
+    <footer className="border-t border-white/10 bg-evergreen-950 py-12 text-cream-100/80">
+      <div className="container-page flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
+        <div>
+          <p className="heading-caps text-cream-50">Everlegacy</p>
+          <p className="mt-2 text-sm">
+            Contact us at{" "}
+            <a href="mailto:support@everlegacy.co.uk" className="underline hover:text-gold-400">
+              support@everlegacy.co.uk
+            </a>
+          </p>
+        </div>
+        <nav aria-label="Footer" className="flex gap-6 text-sm">
+          <Link href="/#faq" className="hover:text-gold-400">
+            FAQ
+          </Link>
+          <Link href="/order" className="hover:text-gold-400">
+            Order now
+          </Link>
+          <Link href="/login" className="hover:text-gold-400">
+            Log in
+          </Link>
+        </nav>
+      </div>
+    </footer>
+  );
+}

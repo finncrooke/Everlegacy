@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream-50 text-evergreen-900 antialiased;
+  }
+
+  /* Visible, high-contrast focus ring for keyboard and screen-reader users */
+  :focus-visible {
+    outline: 3px solid theme("colors.gold.500");
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  .heading-caps {
+    @apply font-sans font-semibold tracking-widest2 uppercase text-sm;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-4 text-base font-semibold text-evergreen-950 transition-colors hover:bg-gold-400 focus-visible:bg-gold-400 min-h-[44px];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-cream-100/40 bg-transparent px-8 py-4 text-base font-semibold text-cream-50 transition-colors hover:bg-white/10 min-h-[44px];
+  }
+
+  .container-page {
+    @apply mx-auto w-full max-w-5xl px-6;
+  }
+
+  .field-label {
+    @apply block text-sm font-medium text-evergreen-800 mb-1.5;
+  }
+
+  .field-input {
+    @apply w-full rounded-lg border border-evergreen-900/15 bg-white px-4 py-3 text-base text-evergreen-950 placeholder:text-evergreen-900/40 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 min-h-[44px];
+  }
+}
