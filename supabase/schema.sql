@@ -56,8 +56,13 @@ create table if not exists public.tribute_pages (
   story text,
   cover_photo_path text,
   visibility text not null default 'unlisted' check (visibility in ('public', 'unlisted')),
-  published boolean not null default false
+  published boolean not null default false,
+  -- Set the first time this page is ever saved — used to send the customer
+  -- straight to /order right after they finish building it the first time.
+  first_saved_at timestamptz
 );
+
+alter table public.tribute_pages add column if not exists first_saved_at timestamptz;
 
 create index if not exists tribute_pages_user_id_idx on public.tribute_pages (user_id);
 create index if not exists tribute_pages_slug_idx on public.tribute_pages (slug);

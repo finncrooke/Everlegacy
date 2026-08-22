@@ -46,6 +46,13 @@ export async function POST(request: Request) {
   // RLS ensures this only succeeds for the page's owner.
   const coverPhoto = photos?.find((p) => p.isCover) ?? photos?.[0];
 
+  const { data: existing } = await supabase
+    .from("tribute_pages")
+    .select("first_saved_at")
+    .eq("id", pageId)
+    .maybeSingle();
+  const isFirstSave = !existing?.first_saved_at;
+
   const { error: updateError } = await supabase
     .from("tribute_pages")
     .update({
@@ -57,6 +64,7 @@ export async function POST(request: Request) {
       visibility: visibility === "public" ? "public" : "unlisted",
       published: Boolean(published),
       cover_photo_path: coverPhoto?.storagePath ?? null,
+      ...(isFirstSave ? { first_saved_at: new Date().toISOString() } : {}),
     })
     .eq("id", pageId);
 
@@ -94,5 +102,5 @@ export async function POST(request: Request) {
     if (timelineError) console.error("Failed to save timeline", timelineError);
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, firstSave: isFirstSave });
 }
