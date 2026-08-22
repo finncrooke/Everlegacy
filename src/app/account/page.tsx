@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SignOutButton } from "@/components/SignOutButton";
 import { generateQrDataUrl, tributeUrl } from "@/lib/qrcode";
+import { ensureTributePage } from "@/lib/tribute";
 
 const STATUS_STEPS = ["processing", "shipped", "delivered"] as const;
 const STATUS_LABELS: Record<(typeof STATUS_STEPS)[number], string> = {
@@ -31,12 +32,7 @@ export default async function AccountPage() {
     .limit(1)
     .maybeSingle();
 
-  const { data: page } = await supabase
-    .from("tribute_pages")
-    .select("id, slug, full_name, published, visibility")
-    .eq("user_id", user.id)
-    .limit(1)
-    .maybeSingle();
+  const page = await ensureTributePage(supabase, user.id);
 
   const url = page ? tributeUrl(page.slug) : null;
   const qrDataUrl = url ? await generateQrDataUrl(url) : null;
@@ -86,7 +82,15 @@ export default async function AccountPage() {
                 ))}
               </ol>
             ) : (
-              <p className="mt-4 text-evergreen-900/70">We couldn&apos;t find an order on your account.</p>
+              <div className="mt-4">
+                <p className="text-evergreen-900/70">
+                  You haven&apos;t ordered a plaque yet. Once the tribute page below is ready, order
+                  one — most people get more than one.
+                </p>
+                <Link href="/order" className="btn-primary mt-4 inline-flex">
+                  Order your plaque
+                </Link>
+              </div>
             )}
           </div>
 

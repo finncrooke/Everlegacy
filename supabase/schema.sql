@@ -5,9 +5,10 @@ create extension if not exists "pgcrypto";
 
 -- ---------------------------------------------------------------------------
 -- orders
--- Created by the Stripe webhook once payment succeeds. Linked to a customer
--- account once they finish creating one (account creation happens right
--- after checkout, but the order exists slightly before the account row does).
+-- Customers build their tribute page first (see tribute_pages below), then
+-- order physical plaques for it. The checkout API route runs authenticated,
+-- so user_id and tribute_page_id are known and stamped on the order by the
+-- Stripe webhook at creation time — no separate "claim" step needed.
 -- ---------------------------------------------------------------------------
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
@@ -21,13 +22,18 @@ create table if not exists public.orders (
   shipping_city text not null,
   shipping_postcode text not null,
   shipping_country text not null default 'United Kingdom',
+  plaque_quantity integer not null default 1,
   amount_total integer not null, -- pence
   currency text not null default 'gbp',
   status text not null default 'processing' check (status in ('processing', 'shipped', 'delivered')),
   user_id uuid references auth.users (id) on delete set null,
   tribute_page_id uuid,
-  claim_token uuid not null default gen_random_uuid() -- used to link the order to the account created right after payment
+  claim_token uuid not null default gen_random_uuid() -- unused since the build-then-pay flow, kept for backward compatibility
 );
+
+-- Incremental migration for a database that already ran an earlier version
+-- of this file — safe to re-run, and safe to run on a fresh database too.
+alter table public.orders add column if not exists plaque_quantity integer not null default 1;
 
 create index if not exists orders_user_id_idx on public.orders (user_id);
 create index if not exists orders_claim_token_idx on public.orders (claim_token);

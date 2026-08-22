@@ -6,7 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,15 +19,22 @@ export default function LoginPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    const { error: signUpError } = await supabase.auth.signUp({ email, password });
 
-    if (signInError) {
-      setError("We couldn't sign you in. Check your email and password and try again.");
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(false);
       return;
     }
 
-    router.push("/account");
+    const initRes = await fetch("/api/tribute/init", { method: "POST" });
+    if (!initRes.ok) {
+      setError("Your account was created, but we couldn't set up your tribute page. Please try logging in.");
+      setLoading(false);
+      return;
+    }
+
+    router.push("/account/edit");
     router.refresh();
   }
 
@@ -36,10 +43,11 @@ export default function LoginPage() {
       <SiteHeader />
       <section className="bg-cream-50 py-16">
         <div className="container-page max-w-md">
-          <p className="heading-caps text-evergreen-700">Account</p>
-          <h1 className="mt-2 font-serif text-3xl text-evergreen-950">Log in</h1>
+          <p className="heading-caps text-evergreen-700">Get started</p>
+          <h1 className="mt-2 font-serif text-3xl text-evergreen-950">Create your account</h1>
           <p className="mt-2 text-evergreen-900/75">
-            Log back in to edit the tribute page or check your order status.
+            Free to start. Build the tribute page first — you only pay when you order the
+            physical plaque.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-6" noValidate>
@@ -59,17 +67,22 @@ export default function LoginPage() {
             </div>
             <div>
               <label htmlFor="password" className="field-label">
-                Password
+                Choose a password
               </label>
               <input
                 id="password"
                 type="password"
                 required
-                autoComplete="current-password"
+                minLength={8}
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="field-input"
+                aria-describedby="password-hint"
               />
+              <p id="password-hint" className="mt-1.5 text-sm text-evergreen-900/70">
+                At least 8 characters.
+              </p>
             </div>
 
             {error && (
@@ -79,14 +92,14 @@ export default function LoginPage() {
             )}
 
             <button type="submit" disabled={loading} className="btn-primary w-full sm:w-auto">
-              {loading ? "Signing in…" : "Log in"}
+              {loading ? "Creating your account…" : "Create account and start building"}
             </button>
           </form>
 
           <p className="mt-6 text-sm text-evergreen-900/70">
-            New to Everlegacy?{" "}
-            <a href="/signup" className="font-medium text-evergreen-800 underline">
-              Create an account
+            Already have an account?{" "}
+            <a href="/login" className="font-medium text-evergreen-800 underline">
+              Log in
             </a>
           </p>
         </div>

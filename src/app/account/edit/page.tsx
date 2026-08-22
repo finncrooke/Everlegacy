@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TributeEditor } from "@/components/TributeEditor";
 import { publicUrlForKey } from "@/lib/r2";
+import { ensureTributePage } from "@/lib/tribute";
 
 export default async function EditTributePage() {
   const supabase = await createClient();
@@ -15,12 +16,7 @@ export default async function EditTributePage() {
     redirect("/login");
   }
 
-  const { data: page } = await supabase
-    .from("tribute_pages")
-    .select("*")
-    .eq("user_id", user.id)
-    .limit(1)
-    .maybeSingle();
+  const page = await ensureTributePage(supabase, user.id);
 
   if (!page) {
     redirect("/account");

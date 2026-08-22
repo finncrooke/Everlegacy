@@ -1,17 +1,16 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-
-const PRICE = process.env.NEXT_PUBLIC_PLAQUE_PRICE_GBP ?? "79";
+import { PLAQUE_TIERS } from "@/lib/pricing";
 
 const steps = [
   {
-    title: "Order your plaque",
-    body: "Choose the plaque and pay securely online. It takes a couple of minutes.",
+    title: "Build their page",
+    body: "Create a free account and add photos, dates, a story or a few words that capture who they were.",
   },
   {
-    title: "Build their page",
-    body: "Add photos, dates, a story or a few words that capture who they were.",
+    title: "Order the plaque",
+    body: "Once their page is ready, order — most people get more than one, at a lower price each.",
   },
   {
     title: "Receive the plaque",
@@ -55,13 +54,13 @@ export default function HomePage() {
               A QR plaque for their headstone. Scan it, and their story lives on.
             </h1>
             <p className="mt-6 max-w-md text-lg text-cream-100/85">
-              Order a small, weatherproof plaque engraved with a QR code. Build a
-              tribute page with photos and memories. Anyone who visits can scan it
-              and remember them, in their own words.
+              Build a free tribute page with photos and memories, then order a small,
+              weatherproof plaque engraved with a QR code linking straight to it. Anyone
+              who visits can scan it and remember them, in their own words.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/order" className="btn-primary">
-                Order now
+              <Link href="/signup" className="btn-primary">
+                Start building — free
               </Link>
               <Link href="#example" className="btn-secondary">
                 See an example page
@@ -142,19 +141,42 @@ export default function HomePage() {
 
       {/* Pricing */}
       <section className="bg-cream-50 py-20">
-        <div className="container-page max-w-2xl text-center">
+        <div className="container-page max-w-3xl text-center">
           <p className="heading-caps text-evergreen-700">Pricing</p>
-          <h2 className="mt-2 font-serif text-3xl text-evergreen-950">One plaque, one clear price</h2>
-          <div className="mx-auto mt-10 rounded-2xl border border-evergreen-900/10 bg-white p-10 shadow-sm">
-            <p className="font-serif text-5xl text-evergreen-950">£{PRICE}</p>
-            <p className="mt-2 text-evergreen-900/70">
-              One-time payment. Includes the engraved plaque, delivery within the UK, and
-              your tribute page for as long as Everlegacy operates.
-            </p>
-            <Link href="/order" className="btn-primary mt-8 bg-gold-500 text-evergreen-950">
-              Order now
-            </Link>
+          <h2 className="mt-2 font-serif text-3xl text-evergreen-950">
+            Build the page free. Order plaques when you&apos;re ready.
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-evergreen-900/70">
+            No payment to start — create your account and build the tribute page first. Most
+            families order more than one plaque, so the price drops the more you get.
+          </p>
+          <div className="mx-auto mt-10 grid gap-6 sm:grid-cols-3">
+            {PLAQUE_TIERS.map((tier) => (
+              <div
+                key={tier.quantity}
+                className={`rounded-2xl border p-8 shadow-sm ${
+                  tier.quantity === 2
+                    ? "border-gold-500 bg-white ring-2 ring-gold-500"
+                    : "border-evergreen-900/10 bg-white"
+                }`}
+              >
+                <p className="heading-caps text-evergreen-700">
+                  {tier.quantity} {tier.quantity === 1 ? "plaque" : "plaques"}
+                </p>
+                <p className="mt-3 font-serif text-4xl text-evergreen-950">£{tier.totalGBP}</p>
+                <p className="mt-1 text-sm text-evergreen-900/60">
+                  £{(tier.totalGBP / tier.quantity).toFixed(2)} each
+                </p>
+              </div>
+            ))}
           </div>
+          <p className="mt-6 text-sm text-evergreen-900/60">
+            One-time payment. Includes engraving, UK delivery, and your tribute page for as
+            long as Everlegacy operates.
+          </p>
+          <Link href="/signup" className="btn-primary mt-8 inline-flex bg-gold-500 text-evergreen-950">
+            Start building — free
+          </Link>
         </div>
       </section>
 

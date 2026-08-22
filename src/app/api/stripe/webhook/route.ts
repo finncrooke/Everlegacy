@@ -40,9 +40,15 @@ export async function POST(request: Request) {
       shipping_address_line2: session.metadata?.shipping_address_line2 || null,
       shipping_city: session.metadata?.shipping_city ?? "",
       shipping_postcode: session.metadata?.shipping_postcode ?? "",
+      plaque_quantity: Number(session.metadata?.plaque_quantity) || 1,
       amount_total: session.amount_total ?? 0,
       currency: session.currency ?? "gbp",
       status: "processing",
+      // Checkout only ever runs for a logged-in customer ordering a plaque
+      // for their own tribute page, so this metadata is trusted — set both
+      // straight away, no separate "claim" step needed.
+      user_id: session.metadata?.user_id || null,
+      tribute_page_id: session.metadata?.tribute_page_id || null,
     });
 
     if (error) {

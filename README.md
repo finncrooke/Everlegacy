@@ -1,8 +1,9 @@
 # Everlegacy
 
-A memorial QR plaque ordering and tribute-page platform. Customers order a
-physical, engraved QR plaque; the QR code links to a private tribute page
-they build for a loved one (photos, story, timeline).
+A memorial QR plaque ordering and tribute-page platform. Customers create a
+free account and build a private tribute page for a loved one first (photos,
+story, timeline) — then order physical, engraved QR plaques for it, priced
+in bundles (1/2/3) to encourage ordering more than one.
 
 ## Stack
 
@@ -30,7 +31,7 @@ npm run dev
    with row-level security policies.
 3. In **Authentication → Email**, keep "Confirm email" on if you want
    Supabase's built-in confirmation email to double as the welcome email,
-   and set the confirmation redirect URL to `{SITE_URL}/account`.
+   and set the confirmation redirect URL to `{SITE_URL}/account/edit`.
 4. Copy the project URL, anon key and service role key into `.env.local`.
 
 ### 2. Stripe
@@ -38,7 +39,8 @@ npm run dev
 1. Create a Stripe account, get your secret key.
 2. Create a webhook endpoint pointing at `{SITE_URL}/api/stripe/webhook`
    listening for `checkout.session.completed`, and copy its signing secret.
-3. Set `NEXT_PUBLIC_PLAQUE_PRICE_GBP` to the plaque price (v1 has one option).
+3. Bundle pricing (1/2/3 plaques) is set in `src/lib/pricing.ts`, not an env
+   var — edit that file to change prices.
 
 ### 3. Cloudflare R2
 
@@ -52,19 +54,20 @@ npm run dev
 
 Set `ADMIN_EMAILS` to a comma-separated list of email addresses (the
 business owner's account). Create that account by signing up normally
-through `/order` → `/order/success` once, or directly in the Supabase
-Auth dashboard, then sign in at `/admin/login`.
+through `/signup` once, or directly in the Supabase Auth dashboard, then
+sign in at `/admin/login`.
 
 ## App structure
 
 | Route | Purpose |
 | --- | --- |
 | `/` | Landing page |
-| `/order` | Plaque checkout (shipping details → Stripe) |
-| `/order/success` | Account creation, right after payment |
+| `/signup` | Free account creation — creates the (empty) tribute page too |
 | `/login` | Customer log in |
-| `/account` | Order status, QR code, link to editor |
 | `/account/edit` | Tribute page editor |
+| `/order` | Plaque checkout — quantity/bundle picker, shipping, Stripe |
+| `/order/success` | Order confirmation, right after payment |
+| `/account` | Order status, QR code, link to editor |
 | `/t/[slug]` | Public tribute page (no login required) |
 | `/admin` | Internal order list, status updates, QR downloads |
 | `/admin/login` | Admin sign in |

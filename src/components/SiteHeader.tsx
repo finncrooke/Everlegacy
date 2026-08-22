@@ -18,8 +18,8 @@ export function SiteHeader() {
           >
             Log in
           </Link>
-          <Link href="/order" className="btn-primary text-sm px-6 py-3">
-            Order now
+          <Link href="/signup" className="btn-primary text-sm px-6 py-3">
+            Get started
           </Link>
         </nav>
       </div>
