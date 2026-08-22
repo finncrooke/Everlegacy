@@ -68,6 +68,9 @@ export async function POST(request: Request) {
       },
       success_url: `${siteUrl}/order/success`,
       cancel_url: `${siteUrl}/order`,
+      // Shows a "discount code" field on the Stripe Checkout page. Codes
+      // themselves are created in the Stripe dashboard, not in this app.
+      allow_promotion_codes: true,
     });
 
     return NextResponse.json({ url: session.url });

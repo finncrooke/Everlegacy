@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import { sendOrderConfirmationEmail } from "@/lib/email";
+import { tributeUrl } from "@/lib/qrcode";
 import Stripe from "stripe";
 
 // Stripe needs the raw request body to verify the webhook signature.
@@ -53,10 +55,27 @@ export async function POST(request: Request) {
 
     if (error) {
       // Unique violation on stripe_checkout_session_id means we've already
-      // recorded this order (Stripe retries webhooks) — safe to ignore.
+      // recorded this order (Stripe retries webhooks) — safe to ignore, and
+      // don't send a second confirmation email for it.
       if (error.code !== "23505") {
         console.error("Failed to record order from webhook", error);
         return NextResponse.json({ error: "Failed to record order" }, { status: 500 });
+      }
+    } else {
+      const email = session.customer_email ?? session.customer_details?.email;
+      const pageId = session.metadata?.tribute_page_id;
+      if (email) {
+        let pageSlug: string | null = null;
+        if (pageId) {
+          const { data: page } = await supabase.from("tribute_pages").select("slug").eq("id", pageId).maybeSingle();
+          pageSlug = page?.slug ?? null;
+        }
+        sendOrderConfirmationEmail({
+          to: email,
+          name: session.metadata?.shipping_name ?? "there",
+          quantity: Number(session.metadata?.plaque_quantity) || 1,
+          tributeUrl: pageSlug ? tributeUrl(pageSlug) : null,
+        }).catch((err) => console.error("Failed to send order confirmation email", err));
       }
     }
   }

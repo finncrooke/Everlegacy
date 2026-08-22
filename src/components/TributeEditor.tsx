@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -59,6 +59,7 @@ export function TributeEditor({
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isFirstRender = useRef(true);
 
   const save = useCallback(
     async (overrides?: { published?: boolean }) => {
@@ -81,25 +82,39 @@ export function TributeEditor({
           }),
         });
         if (!res.ok) throw new Error("save failed");
-        const data = await res.json();
         if (overrides?.published !== undefined) setPublished(overrides.published);
-
-        // First time this page is ever saved with a name on it, hand the
-        // customer straight to ordering a plaque for it — keeps momentum
-        // going from "built the page" to "ordered the plaque" in one flow.
-        if (data.firstSave && fullName.trim()) {
-          setStatus("heading-to-order");
-          setTimeout(() => router.push("/order"), 600);
-          return;
-        }
-
         setStatus("saved");
+        return true;
       } catch {
         setStatus("error");
+        return false;
       }
     },
-    [page.id, fullName, dateOfBirth, dateOfPassing, epitaph, story, visibility, published, photos, timeline, router]
+    [page.id, fullName, dateOfBirth, dateOfPassing, epitaph, story, visibility, published, photos, timeline]
   );
+
+  // Autosave: quietly persist changes a moment after typing stops, so
+  // nothing is ever lost — no explicit "Save" button anymore. Skips the
+  // very first render so loading the page doesn't immediately re-save it.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const timer = setTimeout(() => save(), 1200);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullName, dateOfBirth, dateOfPassing, epitaph, story, visibility, photos, timeline]);
+
+  async function continueToOrder() {
+    // Publishing happens here, not during autosave — ordering a plaque
+    // means the QR code needs somewhere real to point.
+    const ok = await save({ published: true });
+    if (ok) {
+      setStatus("heading-to-order");
+      router.push("/order");
+    }
+  }
 
   const uploadFiles = useCallback(
     async (files: FileList | File[]) => {
@@ -466,22 +481,18 @@ export function TributeEditor({
       </details>
 
       <div className="sticky bottom-0 flex flex-wrap items-center gap-4 rounded-2xl border border-evergreen-900/10 bg-white/95 p-6 shadow-[0_-4px_20px_rgba(15,43,33,0.08)] backdrop-blur">
-        <button type="button" onClick={() => save()} className="btn-primary" disabled={status === "saving"}>
-          Save
+        <button
+          type="button"
+          onClick={continueToOrder}
+          className="btn-primary"
+          disabled={status === "saving" || !fullName.trim()}
+        >
+          Continue to order
         </button>
-        {published ? (
+        {published && (
           <Link href={`/t/${page.slug}`} target="_blank" className="btn-secondary bg-evergreen-950 text-cream-50">
             View live page
           </Link>
-        ) : (
-          <button
-            type="button"
-            onClick={() => save({ published: true })}
-            className="btn-secondary bg-evergreen-950 text-cream-50"
-            disabled={status === "saving"}
-          >
-            Save and publish
-          </button>
         )}
         <a
           href={`/t/${page.slug}?preview=1`}
@@ -489,11 +500,11 @@ export function TributeEditor({
           rel="noreferrer"
           className="inline-flex min-h-[44px] items-center text-sm underline"
         >
-          Preview before publishing
+          Preview page
         </a>
         <span role="status" aria-live="polite" className="text-sm text-evergreen-900/70">
           {status === "saving" && "Saving…"}
-          {status === "saved" && "All changes saved."}
+          {status === "saved" && "Saved automatically."}
           {status === "heading-to-order" && "Saved! Taking you to order your plaque…"}
           {status === "error" && "Couldn't save — please try again."}
         </span>

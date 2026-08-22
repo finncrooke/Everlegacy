@@ -17,7 +17,7 @@ export async function POST() {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const page = await ensureTributePage(supabase, user.id);
+  const page = await ensureTributePage(supabase, user.id, user.email);
   if (!page) {
     return NextResponse.json({ error: "Failed to set up your tribute page" }, { status: 500 });
   }

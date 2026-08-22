@@ -32,7 +32,7 @@ export default async function AccountPage() {
     .limit(1)
     .maybeSingle();
 
-  const page = await ensureTributePage(supabase, user.id);
+  const page = await ensureTributePage(supabase, user.id, user.email);
 
   const url = page ? tributeUrl(page.slug) : null;
   const qrDataUrl = url ? await generateQrDataUrl(url) : null;

@@ -13,6 +13,7 @@ in bundles (1/2/3) to encourage ordering more than one.
 - **Cloudflare Stream** — video hosting/transcoding (not yet wired into the
   editor UI in this v1 — photos are fully supported; see "Next steps")
 - **Stripe Checkout** — payment
+- **Resend** — transactional email (welcome, order confirmation, shipped/delivered); optional, app works without it
 - **Tailwind CSS** — styling
 
 ## Getting started
@@ -50,7 +51,18 @@ npm run dev
    `R2_PUBLIC_HOSTNAME` / `NEXT_PUBLIC_R2_PUBLIC_HOSTNAME` to it — the app
    serves photos directly from that domain to keep egress free.
 
-### 4. Admin access
+### 4. Resend (email)
+
+1. Create a Resend account, get your API key.
+2. Set `RESEND_API_KEY`. You can send immediately from the shared
+   `onboarding@resend.dev` address (already the default `EMAIL_FROM`) — no
+   domain setup needed to start.
+3. Once ready for real customers, verify your own domain in Resend and set
+   `EMAIL_FROM` to something like `"Everlegacy <hello@everlegacy.co.uk>"`.
+4. Optional — if unset, the app works fine and just skips sending (logged
+   to the console instead).
+
+### 5. Admin access
 
 Set `ADMIN_EMAILS` to a comma-separated list of email addresses (the
 business owner's account). Create that account by signing up normally
@@ -77,9 +89,7 @@ sign in at `/admin/login`.
 - Video upload via Cloudflare Stream isn't wired into the editor yet — only
   photos. Stream's direct-creator-upload API follows the same presigned-URL
   pattern as the R2 photo uploads in `src/lib/r2.ts` / `src/app/api/upload`.
-- The tribute editor autosaves only on explicit "Save" — add a debounced
-  autosave if customers report losing work.
-- No transactional email provider is wired up yet beyond Supabase's default
-  auth emails; swap in Resend/Postmark for a branded welcome email.
-- Run a design QA pass against the `apple-design` accessibility/consistency
-  checklist referenced in the build brief before launch.
+- Discount codes: enabled in Stripe Checkout (`allow_promotion_codes`), but
+  the codes themselves are created in the Stripe dashboard, not this app.
+- Still on Stripe test mode and a `*.vercel.app` domain — switch to live
+  keys/webhook and a custom domain before taking real orders.

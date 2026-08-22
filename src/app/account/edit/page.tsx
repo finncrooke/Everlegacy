@@ -16,7 +16,7 @@ export default async function EditTributePage() {
     redirect("/login");
   }
 
-  const page = await ensureTributePage(supabase, user.id);
+  const page = await ensureTributePage(supabase, user.id, user.email);
 
   if (!page) {
     redirect("/account");
@@ -42,7 +42,8 @@ export default async function EditTributePage() {
           <p className="heading-caps text-evergreen-700">Tribute page editor</p>
           <h1 className="mt-2 font-serif text-3xl text-evergreen-950">Build their tribute page</h1>
           <p className="mt-2 text-evergreen-900/75">
-            Add as much or as little as feels right. You can come back and update this at any time.
+            Add as much or as little as feels right — everything saves automatically as you go.
+            When you&apos;re ready, continue to order a plaque for it.
           </p>
 
           <TributeEditor
