@@ -68,6 +68,8 @@ export function TributeWizard() {
   async function uploadFiles(files: FileList) {
     if (!pageId) return;
     setUploading(true);
+    setError(null);
+    let failures = 0;
     for (const file of Array.from(files)) {
       if (!ACCEPTED_TYPES.includes(file.type)) continue;
       try {
@@ -76,15 +78,34 @@ export function TributeWizard() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ pageId, contentType: file.type }),
         });
-        if (!presignRes.ok) continue;
+        if (!presignRes.ok) {
+          failures += 1;
+          continue;
+        }
         const { uploadUrl, key, publicUrl } = await presignRes.json();
-        await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+        const putRes = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+        // A failed PUT (blocked by CORS, expired signature, etc.) must not be
+        // treated as a success — otherwise the photo appears to "upload" but
+        // the file never actually lands in storage, and the page ends up
+        // pointing at a broken image.
+        if (!putRes.ok) {
+          failures += 1;
+          continue;
+        }
         setPhotos((prev) => [...prev, { storagePath: key, publicUrl }]);
       } catch (err) {
+        failures += 1;
         console.error("Photo upload failed", err);
       }
     }
     setUploading(false);
+    if (failures > 0) {
+      setError(
+        failures === 1
+          ? "One photo couldn't be uploaded — please try again."
+          : `${failures} photos couldn't be uploaded — please try again.`
+      );
+    }
   }
 
   function addTimelineEntry() {
@@ -277,6 +298,7 @@ export function TributeWizard() {
                   disabled={uploading}
                   onChange={(e) => e.target.files && uploadFiles(e.target.files)}
                 />
+                {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
                 <StepActions onSkip={next} onContinue={next} />
               </div>
             )}

@@ -57,6 +57,7 @@ export function TributeEditor({
     "idle"
   );
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isFirstRender = useRef(true);
@@ -123,6 +124,8 @@ export function TributeEditor({
       const list = Array.from(files).filter((f) => ACCEPTED_TYPES.includes(f.type));
       if (list.length === 0) return;
       setUploading(true);
+      setUploadError(null);
+      let failures = 0;
 
       for (const file of list) {
         try {
@@ -131,21 +134,39 @@ export function TributeEditor({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ pageId: page.id, contentType: file.type }),
           });
-          if (!presignRes.ok) continue;
+          if (!presignRes.ok) {
+            failures += 1;
+            continue;
+          }
           const { uploadUrl, key, publicUrl } = await presignRes.json();
 
-          await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+          const putRes = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+          // A failed PUT (blocked by CORS, expired signature, etc.) must not
+          // be treated as a success — otherwise the photo appears to
+          // "upload" but never actually lands in storage.
+          if (!putRes.ok) {
+            failures += 1;
+            continue;
+          }
 
           setPhotos((prev) => [
             ...prev,
             { storagePath: key, publicUrl, isCover: prev.length === 0, altText: "" },
           ]);
         } catch (err) {
+          failures += 1;
           console.error("Photo upload failed", err);
         }
       }
 
       setUploading(false);
+      if (failures > 0) {
+        setUploadError(
+          failures === 1
+            ? "One photo couldn't be uploaded — please try again."
+            : `${failures} photos couldn't be uploaded — please try again.`
+        );
+      }
     },
     [page.id]
   );
@@ -355,6 +376,7 @@ export function TributeEditor({
           onChange={handleFileSelect}
           disabled={uploading}
         />
+        {uploadError && <p className="mt-3 text-sm text-red-700">{uploadError}</p>}
       </section>
 
       {/* 3. Timeline — optional, collapsed by default */}
