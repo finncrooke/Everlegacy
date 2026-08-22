@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { generateSlug } from "@/lib/qrcode";
 import { sendWelcomeEmail } from "@/lib/email";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 /**
  * Returns the user's tribute page, creating an empty one if they don't have
@@ -43,6 +44,9 @@ export async function ensureTributePage(supabase: SupabaseClient, userId: string
   if (userEmail) {
     sendWelcomeEmail(userEmail).catch((err) => console.error("Failed to send welcome email", err));
   }
+  sendTelegramMessage(`🆕 New Everlegacy account: ${userEmail ?? userId}`).catch((err) =>
+    console.error("Failed to send Telegram notification", err)
+  );
 
   return page;
 }

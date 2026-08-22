@@ -58,7 +58,7 @@ npm run dev
    `onboarding@resend.dev` address (already the default `EMAIL_FROM`) — no
    domain setup needed to start.
 3. Once ready for real customers, verify your own domain in Resend and set
-   `EMAIL_FROM` to something like `"Everlegacy <hello@everlegacy.co.uk>"`.
+   `EMAIL_FROM` to something like `"Everlegacy <hello@everlegacy.link>"`.
 4. Optional — if unset, the app works fine and just skips sending (logged
    to the console instead).
 

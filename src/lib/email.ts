@@ -20,7 +20,7 @@ function layout(bodyHtml: string) {
         ${bodyHtml}
       </div>
       <div style="padding:20px 32px;border-top:1px solid rgba(28,43,35,0.08);color:rgba(28,43,35,0.5);font-size:12px;">
-        Everlegacy &middot; <a href="mailto:support@everlegacy.co.uk" style="color:rgba(28,43,35,0.5);">support@everlegacy.co.uk</a>
+        Everlegacy &middot; <a href="mailto:support@everlegacy.link" style="color:rgba(28,43,35,0.5);">support@everlegacy.link</a>
       </div>
     </div>
   </div>`;

@@ -15,8 +15,8 @@ export function SiteFooter() {
           />
           <p className="mt-2 text-sm">
             Contact us at{" "}
-            <a href="mailto:support@everlegacy.co.uk" className="underline hover:text-gold-400">
-              support@everlegacy.co.uk
+            <a href="mailto:support@everlegacy.link" className="underline hover:text-gold-400">
+              support@everlegacy.link
             </a>
           </p>
         </div>
@@ -24,8 +24,8 @@ export function SiteFooter() {
           <Link href="/#faq" className="hover:text-gold-400">
             FAQ
           </Link>
-          <Link href="/order" className="hover:text-gold-400">
-            Order now
+          <Link href="/signup" className="hover:text-gold-400">
+            Get started
           </Link>
           <Link href="/login" className="hover:text-gold-400">
             Log in
