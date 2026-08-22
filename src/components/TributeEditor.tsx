@@ -107,9 +107,11 @@ export function TributeEditor({
   }, [fullName, dateOfBirth, dateOfPassing, epitaph, story, visibility, photos, timeline]);
 
   async function continueToOrder() {
-    // Publishing happens here, not during autosave — ordering a plaque
-    // means the QR code needs somewhere real to point.
-    const ok = await save({ published: true });
+    // Not published here — the page only goes live once the plaque is
+    // actually paid for, so the QR code and public link don't exist for
+    // anyone to see (or guess) before that. The Stripe webhook publishes it
+    // on payment success.
+    const ok = await save();
     if (ok) {
       setStatus("heading-to-order");
       router.push(`/order?page=${page.id}`);

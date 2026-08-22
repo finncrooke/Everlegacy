@@ -78,7 +78,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const pageId = session.metadata?.tribute_page_id;
   let pageSlug: string | null = null;
   if (pageId) {
-    const { data: page } = await supabase.from("tribute_pages").select("slug").eq("id", pageId).maybeSingle();
+    // The page only goes live once a plaque for it is actually paid for —
+    // nobody can see it, and the QR code doesn't point anywhere real, until
+    // this fires. Publishing here (not when the customer clicks "continue
+    // to order") is what makes that true even for a $0 discount-code order.
+    const { data: page } = await supabase
+      .from("tribute_pages")
+      .update({ published: true })
+      .eq("id", pageId)
+      .select("slug")
+      .maybeSingle();
     pageSlug = page?.slug ?? null;
   }
 

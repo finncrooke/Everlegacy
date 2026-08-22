@@ -36,15 +36,30 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: page.full_name || "A tribute page",
     description: page.epitaph || `A tribute page remembering ${page.full_name}.`,
-    robots: page.visibility === "public" ? undefined : { index: false, follow: false },
+    robots:
+      page.published && page.visibility === "public" ? undefined : { index: false, follow: false },
   };
 }
 
-export default async function TributePage({ params }: { params: { slug: string } }) {
+export default async function TributePage({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { preview?: string };
+}) {
   const data = await getPage(params.slug);
   if (!data) notFound();
 
   const { page, photos, timeline } = data;
+
+  // The page only goes live once a plaque for it has been paid for — before
+  // that, nobody scanning a guessed link (or the not-yet-live QR code)
+  // should be able to see it. The owner's own "Preview page" link still
+  // works via ?preview=1 so they can check it before ordering.
+  if (!page.published && searchParams.preview !== "1") {
+    notFound();
+  }
   const dob = formatDate(page.date_of_birth);
   const dop = formatDate(page.date_of_passing);
   const coverPhoto = photos.find((p) => p.is_cover) ?? photos[0];

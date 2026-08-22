@@ -118,7 +118,10 @@ export function TributeWizard() {
 
   async function handleContinueToOrder() {
     setFinishing(true);
-    const ok = await saveAll(true);
+    // Not published yet — the page only goes live once the plaque is
+    // actually paid for, so nobody can see it (or scan a QR to it) before
+    // that. The Stripe webhook publishes it on payment success.
+    const ok = await saveAll(false);
     setFinishing(false);
     if (ok) router.push(`/order?page=${pageId}`);
     else setError("Couldn't save — please try again.");

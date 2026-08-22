@@ -43,7 +43,10 @@ export default async function AccountPage() {
   const cards = await Promise.all(
     pages.map(async (page) => {
       const url = tributeUrl(page.slug);
-      const qrDataUrl = await generateQrDataUrl(url);
+      // The QR code isn't generated until the page is actually published —
+      // which only happens once a plaque for it has been paid for — so
+      // there's nothing to scan (or leak) before payment.
+      const qrDataUrl = page.published ? await generateQrDataUrl(url) : null;
       return { page, url, qrDataUrl, orders: ordersByPage.get(page.id) ?? [] };
     })
   );
@@ -77,21 +80,29 @@ export default async function AccountPage() {
                 <div key={page.id} className="rounded-2xl border border-evergreen-900/10 bg-white p-8">
                   <div className="grid gap-8 sm:grid-cols-[auto,1fr] sm:items-start">
                     <div className="flex flex-col items-center gap-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={qrDataUrl}
-                        alt={`QR code linking to ${page.full_name || "the tribute page"}`}
-                        width={140}
-                        height={140}
-                        className="rounded-lg border border-evergreen-900/10"
-                      />
-                      <a
-                        href={qrDataUrl}
-                        download={`everlegacy-qr-${page.slug}.png`}
-                        className="inline-flex min-h-[44px] items-center text-sm underline"
-                      >
-                        Download QR code
-                      </a>
+                      {qrDataUrl ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={qrDataUrl}
+                            alt={`QR code linking to ${page.full_name || "the tribute page"}`}
+                            width={140}
+                            height={140}
+                            className="rounded-lg border border-evergreen-900/10"
+                          />
+                          <a
+                            href={qrDataUrl}
+                            download={`everlegacy-qr-${page.slug}.png`}
+                            className="inline-flex min-h-[44px] items-center text-sm underline"
+                          >
+                            Download QR code
+                          </a>
+                        </>
+                      ) : (
+                        <div className="flex h-[140px] w-[140px] flex-col items-center justify-center rounded-lg border border-dashed border-evergreen-900/20 p-3 text-center text-xs text-evergreen-900/50">
+                          QR code appears once your plaque is paid for
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -104,7 +115,7 @@ export default async function AccountPage() {
                             {url}
                           </a>
                         ) : (
-                          "Not published yet"
+                          "Not published yet — this goes live once a plaque for it is paid for."
                         )}
                       </p>
 
