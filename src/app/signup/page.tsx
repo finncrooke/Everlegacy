@@ -12,6 +12,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,10 +20,20 @@ export default function SignupPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error: signUpError } = await supabase.auth.signUp({ email, password });
+    const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
 
     if (signUpError) {
       setError(signUpError.message);
+      setLoading(false);
+      return;
+    }
+
+    // With email confirmation enabled, signUp() creates the account but
+    // doesn't return an active session — the customer has to click the link
+    // in the confirmation email first, which lands them on /account/edit
+    // (that page creates the tribute page itself if it's missing).
+    if (!data.session) {
+      setNeedsConfirmation(true);
       setLoading(false);
       return;
     }
@@ -36,6 +47,25 @@ export default function SignupPage() {
 
     router.push("/account/edit");
     router.refresh();
+  }
+
+  if (needsConfirmation) {
+    return (
+      <div className="min-h-screen bg-evergreen-950">
+        <SiteHeader />
+        <section className="bg-cream-50 py-16">
+          <div className="container-page max-w-md">
+            <p className="heading-caps text-evergreen-700">Almost there</p>
+            <h1 className="mt-2 font-serif text-3xl text-evergreen-950">Check your email</h1>
+            <p className="mt-4 text-evergreen-900/75">
+              We&apos;ve sent a confirmation link to <strong>{email}</strong>. Click it to finish
+              creating your account and start building the tribute page.
+            </p>
+          </div>
+        </section>
+        <SiteFooter />
+      </div>
+    );
   }
 
   return (
