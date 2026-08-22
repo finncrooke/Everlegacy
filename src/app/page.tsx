@@ -124,10 +124,10 @@ export default function HomePage() {
               <h3 className="font-serif text-2xl text-evergreen-950">Margaret Ellen Hughes</h3>
               <p className="mt-1 text-evergreen-900/70">3 April 1938 – 19 November 2024</p>
               <p className="mt-4 font-serif italic text-evergreen-900/80">
-                "A quiet kindness that touched everyone she met."
+                &ldquo;A quiet kindness that touched everyone she met.&rdquo;
               </p>
               <p className="mt-6 text-left text-sm leading-relaxed text-evergreen-900/80">
-                Margaret spent forty years teaching at St. Anne's Primary, where
+                Margaret spent forty years teaching at St. Anne&apos;s Primary, where
                 generations of children came to know her patience and her love of
                 storytelling. She is remembered by her three children, seven
                 grandchildren, and the countless pupils she inspired...

@@ -43,7 +43,7 @@ export default function OrderPage() {
           <p className="heading-caps text-evergreen-700">Order</p>
           <h1 className="mt-2 font-serif text-3xl text-evergreen-950">Order your memorial plaque</h1>
           <p className="mt-2 text-evergreen-900/75">
-            One weatherproof QR plaque, £{PRICE}. You'll create your account and start
+            One weatherproof QR plaque, £{PRICE}. You&apos;ll create your account and start
             building the tribute page right after payment.
           </p>
 
@@ -138,7 +138,7 @@ export default function OrderPage() {
               {loading ? "Redirecting to payment…" : `Continue to payment — £${PRICE}`}
             </button>
             <p className="text-sm text-evergreen-900/70">
-              You'll be taken to Stripe's secure checkout to complete payment.
+              You&apos;ll be taken to Stripe&apos;s secure checkout to complete payment.
             </p>
           </form>
         </div>

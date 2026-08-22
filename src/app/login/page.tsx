@@ -84,7 +84,7 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-sm text-evergreen-900/70">
-            Haven't ordered yet?{" "}
+            Haven&apos;t ordered yet?{" "}
             <a href="/order" className="font-medium text-evergreen-800 underline">
               Order a plaque
             </a>

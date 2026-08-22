@@ -213,7 +213,7 @@ export function TributeEditor({
       <fieldset className="space-y-4 rounded-2xl border border-evergreen-900/10 bg-white p-8">
         <legend className="heading-caps text-evergreen-700 px-1">Photos</legend>
         <p className="text-sm text-evergreen-900/70">
-          Upload as many photos as you'd like. Mark one as the cover photo — it appears at the
+          Upload as many photos as you&apos;d like. Mark one as the cover photo — it appears at the
           top of the page.
         </p>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -264,7 +264,7 @@ export function TributeEditor({
       <fieldset className="space-y-4 rounded-2xl border border-evergreen-900/10 bg-white p-8">
         <legend className="heading-caps text-evergreen-700 px-1">Timeline (optional)</legend>
         <p className="text-sm text-evergreen-900/70">
-          Add milestones like "1985 — Married Jane" or "2001 — Opened the family shop".
+          Add milestones like &ldquo;1985 — Married Jane&rdquo; or &ldquo;2001 — Opened the family shop&rdquo;.
         </p>
         <div className="space-y-6">
           {timeline.map((entry, i) => (
@@ -335,7 +335,7 @@ export function TributeEditor({
             <span>
               <span className="block font-medium text-evergreen-950">Unlisted (recommended)</span>
               <span className="block text-sm text-evergreen-900/70">
-                Only people with the direct link or QR code can view the page. It won't appear in
+                Only people with the direct link or QR code can view the page. It won&apos;t appear in
                 search engines.
               </span>
             </span>

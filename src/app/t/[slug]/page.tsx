@@ -71,7 +71,7 @@ export default async function TributePage({ params }: { params: { slug: string }
           )}
           {page.epitaph && (
             <p className="mx-auto mt-6 max-w-md font-serif text-xl italic text-evergreen-900/85">
-              "{page.epitaph}"
+              &ldquo;{page.epitaph}&rdquo;
             </p>
           )}
 

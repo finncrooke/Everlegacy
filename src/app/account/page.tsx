@@ -86,7 +86,7 @@ export default async function AccountPage() {
                 ))}
               </ol>
             ) : (
-              <p className="mt-4 text-evergreen-900/70">We couldn't find an order on your account.</p>
+              <p className="mt-4 text-evergreen-900/70">We couldn&apos;t find an order on your account.</p>
             )}
           </div>
 
@@ -141,7 +141,7 @@ export default async function AccountPage() {
               </div>
             ) : (
               <p className="mt-4 text-evergreen-900/70">
-                We're still setting up your tribute page — refresh in a moment.
+                We&apos;re still setting up your tribute page — refresh in a moment.
               </p>
             )}
           </div>
