@@ -4,9 +4,14 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TributeEditor } from "@/components/TributeEditor";
 import { publicUrlForKey } from "@/lib/r2";
-import { ensureTributePage } from "@/lib/tribute";
+import { getOwnedTributePage, listTributePages } from "@/lib/tribute";
+import { possessive } from "@/lib/text";
 
-export default async function EditTributePage() {
+export default async function EditTributePage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -16,10 +21,17 @@ export default async function EditTributePage() {
     redirect("/login");
   }
 
-  const page = await ensureTributePage(supabase, user.id, user.email);
-
-  if (!page) {
-    redirect("/account");
+  let page;
+  if (searchParams.page) {
+    page = await getOwnedTributePage(supabase, user.id, searchParams.page);
+    if (!page) redirect("/account");
+  } else {
+    // No page specified — fall back sensibly depending on how many the
+    // account has, rather than guessing which one they meant.
+    const pages = await listTributePages(supabase, user.id);
+    if (pages.length === 0) redirect("/account/new");
+    if (pages.length > 1) redirect("/account");
+    page = pages[0];
   }
 
   const { data: photos } = await supabase
@@ -40,10 +52,12 @@ export default async function EditTributePage() {
       <section className="bg-cream-50 py-16">
         <div className="container-page max-w-3xl">
           <p className="heading-caps text-evergreen-700">Tribute page editor</p>
-          <h1 className="mt-2 font-serif text-3xl text-evergreen-950">Build their tribute page</h1>
+          <h1 className="mt-2 font-serif text-3xl text-evergreen-950">
+            {page.full_name ? `Editing ${possessive(page.full_name)} page` : "Build their tribute page"}
+          </h1>
           <p className="mt-2 text-evergreen-900/75">
-            Add as much or as little as feels right — everything saves automatically as you go.
-            When you&apos;re ready, continue to order a plaque for it.
+            Everything saves automatically as you go. When you&apos;re ready, continue to order a
+            plaque for it.
           </p>
 
           <TributeEditor

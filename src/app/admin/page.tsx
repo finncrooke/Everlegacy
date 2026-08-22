@@ -17,7 +17,16 @@ export default async function AdminPage() {
     redirect("/admin/login");
   }
   if (!isAdminEmail(user.email)) {
-    redirect("/");
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100 p-8 text-center text-gray-900">
+        <div className="max-w-sm">
+          <h1 className="text-xl font-semibold">You don&apos;t have access to this page</h1>
+          <p className="mt-2 text-gray-600">
+            {user.email} isn&apos;t an admin account. If you think this is a mistake, contact support.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   const admin = createServiceRoleClient();

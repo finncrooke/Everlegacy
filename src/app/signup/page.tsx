@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -13,6 +13,19 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  // Already signed in? Don't show the signup form again.
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        router.replace("/account");
+      } else {
+        setCheckingSession(false);
+      }
+    });
+  }, [router]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,7 +33,11 @@ export default function SignupPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/account?welcome=1` },
+    });
 
     if (signUpError) {
       setError(signUpError.message);
@@ -30,24 +47,21 @@ export default function SignupPage() {
 
     // With email confirmation enabled, signUp() creates the account but
     // doesn't return an active session — the customer has to click the link
-    // in the confirmation email first, which lands them on /account/edit
-    // (that page creates the tribute page itself if it's missing).
+    // in the confirmation email first, which lands them on /account?welcome=1
+    // (that page sends the welcome email/notification and lets them build).
     if (!data.session) {
       setNeedsConfirmation(true);
       setLoading(false);
       return;
     }
 
-    const initRes = await fetch("/api/tribute/init", { method: "POST" });
-    if (!initRes.ok) {
-      setError("Your account was created, but we couldn't set up your tribute page. Please try logging in.");
-      setLoading(false);
-      return;
-    }
+    await fetch("/api/account/welcome", { method: "POST" }).catch(() => {});
 
-    router.push("/account/edit");
+    router.push("/account/new");
     router.refresh();
   }
+
+  if (checkingSession) return null;
 
   if (needsConfirmation) {
     return (

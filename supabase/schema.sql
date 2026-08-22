@@ -40,7 +40,9 @@ create index if not exists orders_claim_token_idx on public.orders (claim_token)
 
 -- ---------------------------------------------------------------------------
 -- tribute_pages
--- One per order/account for v1 (no multi-page accounts yet).
+-- An account can own any number of these — user_id is never unique here by
+-- design, so one person can build a separate page for each person they're
+-- memorialising.
 -- ---------------------------------------------------------------------------
 create table if not exists public.tribute_pages (
   id uuid primary key default gen_random_uuid(),

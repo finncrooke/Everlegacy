@@ -43,4 +43,25 @@
   .field-input {
     @apply w-full rounded-lg border border-evergreen-900/15 bg-white px-4 py-3 text-base text-evergreen-950 placeholder:text-evergreen-900/40 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 min-h-[44px];
   }
+
+  /* Entrance animation for each step of the tribute wizard */
+  .wizard-step-in {
+    animation: wizard-step-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wizard-step-in {
+      animation: none;
+    }
+  }
+}
+
+@keyframes wizard-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }

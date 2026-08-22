@@ -1,28 +1,35 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { generateSlug } from "@/lib/qrcode";
-import { sendWelcomeEmail } from "@/lib/email";
-import { sendTelegramMessage } from "@/lib/telegram";
 
 /**
- * Returns the user's tribute page, creating an empty one if they don't have
- * one yet. Signup normally creates it immediately, but if Supabase email
- * confirmation is enabled there's a gap between signUp() and the first
- * authenticated request — this is the fallback that closes it, so a
- * confirmed-but-not-yet-initialized account never dead-ends.
- *
- * A page is only ever created once per account, so this also doubles as the
- * hook point for the welcome email — pass userEmail to send it.
+ * One account can build several tribute pages (e.g. for different family
+ * members), so there's no single "the user's page" anymore — every lookup
+ * here is explicit about which page, to avoid ever mixing two up.
  */
-export async function ensureTributePage(supabase: SupabaseClient, userId: string, userEmail?: string | null) {
-  const { data: existing } = await supabase
+
+/** All tribute pages belonging to a user, most recently created first. */
+export async function listTributePages(supabase: SupabaseClient, userId: string) {
+  const { data } = await supabase
     .from("tribute_pages")
     .select("*")
     .eq("user_id", userId)
-    .limit(1)
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+/** A single tribute page, only if it belongs to this user. */
+export async function getOwnedTributePage(supabase: SupabaseClient, userId: string, pageId: string) {
+  const { data } = await supabase
+    .from("tribute_pages")
+    .select("*")
+    .eq("id", pageId)
+    .eq("user_id", userId)
     .maybeSingle();
+  return data;
+}
 
-  if (existing) return existing;
-
+/** Creates a new (additional) tribute page for this user. */
+export async function createTributePage(supabase: SupabaseClient, userId: string, fullName: string) {
   let slug = generateSlug();
   for (let attempt = 0; attempt < 5; attempt++) {
     const { data: clash } = await supabase.from("tribute_pages").select("id").eq("slug", slug).maybeSingle();
@@ -32,7 +39,7 @@ export async function ensureTributePage(supabase: SupabaseClient, userId: string
 
   const { data: page, error } = await supabase
     .from("tribute_pages")
-    .insert({ user_id: userId, slug })
+    .insert({ user_id: userId, slug, full_name: fullName })
     .select("*")
     .single();
 
@@ -40,13 +47,6 @@ export async function ensureTributePage(supabase: SupabaseClient, userId: string
     console.error("Failed to create tribute page", error);
     return null;
   }
-
-  if (userEmail) {
-    sendWelcomeEmail(userEmail).catch((err) => console.error("Failed to send welcome email", err));
-  }
-  sendTelegramMessage(`🆕 New Everlegacy account: ${userEmail ?? userId}`).catch((err) =>
-    console.error("Failed to send Telegram notification", err)
-  );
 
   return page;
 }

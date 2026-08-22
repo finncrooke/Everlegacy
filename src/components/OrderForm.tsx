@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PLAQUE_TIERS, tierFor, type PlaqueQuantity } from "@/lib/pricing";
 
-export function OrderForm() {
+export function OrderForm({ pageId }: { pageId: string }) {
   const [quantity, setQuantity] = useState<PlaqueQuantity>(2);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +14,7 @@ export function OrderForm() {
     setLoading(true);
 
     const form = new FormData(e.currentTarget);
-    const payload = { ...Object.fromEntries(form.entries()), quantity };
+    const payload = { ...Object.fromEntries(form.entries()), quantity, pageId };
 
     try {
       const res = await fetch("/api/checkout", {

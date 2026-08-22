@@ -34,8 +34,10 @@ export async function POST(request: Request) {
   }
 
   if (order?.customer_email) {
-    sendOrderStatusEmail({ to: order.customer_email, name: order.shipping_name ?? "there", status }).catch((err) =>
-      console.error("Failed to send order status email", err)
+    // Awaited — see the Stripe webhook for why fire-and-forget doesn't work
+    // reliably on Vercel's serverless functions.
+    await sendOrderStatusEmail({ to: order.customer_email, name: order.shipping_name ?? "there", status }).catch(
+      (err) => console.error("Failed to send order status email", err)
     );
   }
 

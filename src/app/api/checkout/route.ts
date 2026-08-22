@@ -12,22 +12,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Please log in first." }, { status: 401 });
   }
 
+  const body = await request.json();
+  const { name, address1, address2, city, postcode, quantity, pageId } = body ?? {};
+
+  if (!pageId) {
+    return NextResponse.json({ error: "Missing which tribute page this order is for." }, { status: 400 });
+  }
+
+  // Verify this page actually belongs to the signed-in customer — never
+  // trust a pageId from the client without checking, so an order can never
+  // end up linked to someone else's (or the wrong) tribute page.
   const { data: page } = await supabase
     .from("tribute_pages")
     .select("id")
+    .eq("id", pageId)
     .eq("user_id", user.id)
-    .limit(1)
     .maybeSingle();
 
   if (!page) {
     return NextResponse.json(
-      { error: "Build your tribute page first, then come back to order a plaque for it." },
+      { error: "We couldn't find that tribute page on your account." },
       { status: 400 }
     );
   }
-
-  const body = await request.json();
-  const { name, address1, address2, city, postcode, quantity } = body ?? {};
 
   if (!name || !address1 || !city || !postcode) {
     return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });

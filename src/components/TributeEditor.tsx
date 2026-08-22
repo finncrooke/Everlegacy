@@ -112,7 +112,7 @@ export function TributeEditor({
     const ok = await save({ published: true });
     if (ok) {
       setStatus("heading-to-order");
-      router.push("/order");
+      router.push(`/order?page=${page.id}`);
     }
   }
 
