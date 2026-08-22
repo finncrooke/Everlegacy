@@ -75,7 +75,7 @@ export default async function AccountPage() {
                       {i + 1}
                     </span>
                     <span
-                      className={i <= currentStepIndex ? "font-medium text-evergreen-950" : "text-evergreen-900/50"}
+                      className={i <= currentStepIndex ? "font-medium text-evergreen-950" : "text-evergreen-900/70"}
                     >
                       {STATUS_LABELS[step]}
                     </span>
@@ -105,7 +105,11 @@ export default async function AccountPage() {
                       height={180}
                       className="rounded-lg border border-evergreen-900/10"
                     />
-                    <a href={qrDataUrl} download={`everlegacy-qr-${page.slug}.png`} className="text-sm underline">
+                    <a
+                      href={qrDataUrl}
+                      download={`everlegacy-qr-${page.slug}.png`}
+                      className="inline-flex min-h-[44px] items-center text-sm underline"
+                    >
                       Download QR code
                     </a>
                   </div>

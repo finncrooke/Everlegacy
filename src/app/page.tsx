@@ -100,7 +100,7 @@ export default function HomePage() {
           <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step, i) => (
               <li key={step.title}>
-                <span className="heading-caps text-gold-600">Step {i + 1}</span>
+                <span className="heading-caps text-gold-700">Step {i + 1}</span>
                 <h3 className="mt-2 font-serif text-xl text-evergreen-950">{step.title}</h3>
                 <p className="mt-2 text-evergreen-900/75">{step.body}</p>
               </li>
@@ -166,7 +166,9 @@ export default function HomePage() {
           <dl className="mt-10 divide-y divide-white/10">
             {faqs.map((faq) => (
               <div key={faq.q} className="py-6">
-                <dt className="font-serif text-lg text-cream-50">{faq.q}</dt>
+                <dt>
+                  <h3 className="font-serif text-lg text-cream-50">{faq.q}</h3>
+                </dt>
                 <dd className="mt-2 text-cream-100/80">{faq.a}</dd>
               </div>
             ))}

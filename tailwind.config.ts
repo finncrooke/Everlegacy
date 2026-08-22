@@ -16,6 +16,11 @@ const config: Config = {
           400: "#d9bd7d",
           500: "#c9a24b",
           600: "#b38b3a",
+          // Darker than 600 specifically so gold text on cream/white
+          // backgrounds still clears the 4.5:1 contrast minimum — 500/600
+          // read fine as fills or on dark backgrounds but fail as text on
+          // light ones.
+          700: "#8a6a2c",
         },
         cream: {
           50: "#fbf8f1",

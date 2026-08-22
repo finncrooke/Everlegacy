@@ -135,7 +135,7 @@ function SuccessContent() {
             className="field-input"
             aria-describedby="password-hint"
           />
-          <p id="password-hint" className="mt-1.5 text-sm text-evergreen-900/60">
+          <p id="password-hint" className="mt-1.5 text-sm text-evergreen-900/70">
             At least 8 characters.
           </p>
         </div>

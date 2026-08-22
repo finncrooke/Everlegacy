@@ -91,6 +91,7 @@ export default async function TributePage({ params }: { params: { slug: string }
                     key={photo.id}
                     src={publicUrlForKey(photo.storage_path)}
                     alt={photo.alt_text || `Photo of ${page.full_name}`}
+                    loading="lazy"
                     className="aspect-square w-full rounded-lg object-cover"
                   />
                 ))}
@@ -104,7 +105,7 @@ export default async function TributePage({ params }: { params: { slug: string }
               <ol className="mt-6 space-y-6 border-l-2 border-gold-500/50 pl-6">
                 {timeline.map((entry) => (
                   <li key={entry.id}>
-                    <p className="text-sm font-semibold text-gold-600">{entry.entry_date}</p>
+                    <p className="text-sm font-semibold text-gold-700">{entry.entry_date}</p>
                     <p className="font-serif text-lg text-evergreen-950">{entry.title}</p>
                     {entry.description && (
                       <p className="mt-1 text-evergreen-900/80">{entry.description}</p>
@@ -118,7 +119,7 @@ export default async function TributePage({ params }: { params: { slug: string }
       </main>
 
       <footer className="border-t border-evergreen-900/10 py-8 text-center">
-        <Link href="/" className="text-sm text-evergreen-900/60 underline hover:text-evergreen-900">
+        <Link href="/" className="text-sm text-evergreen-900/70 underline hover:text-evergreen-900">
           Create your own tribute page
         </Link>
       </footer>

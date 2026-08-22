@@ -216,20 +216,20 @@ export function TributeEditor({
           Upload as many photos as you'd like. Mark one as the cover photo — it appears at the
           top of the page.
         </p>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {photos.map((photo, i) => (
-            <div key={photo.storagePath} className="relative overflow-hidden rounded-lg border border-evergreen-900/10">
+            <div key={photo.storagePath} className="overflow-hidden rounded-lg border border-evergreen-900/10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={photo.publicUrl} alt={photo.altText || "Tribute photo"} className="h-32 w-full object-cover" />
-              <div className="flex items-center justify-between bg-evergreen-950/85 px-2 py-1.5 text-xs text-cream-50">
+              <img src={photo.publicUrl} alt={photo.altText || "Tribute photo"} className="h-40 w-full object-cover" />
+              <div className="flex items-center justify-between gap-2 bg-evergreen-950 px-3 text-sm text-cream-50">
                 <button
                   type="button"
                   onClick={() => setCover(i)}
-                  className={photo.isCover ? "font-semibold text-gold-400" : "underline"}
+                  className={`min-h-[44px] py-2 ${photo.isCover ? "font-semibold text-gold-400" : "underline"}`}
                 >
                   {photo.isCover ? "Cover photo" : "Set as cover"}
                 </button>
-                <button type="button" onClick={() => removePhoto(i)} className="underline">
+                <button type="button" onClick={() => removePhoto(i)} className="min-h-[44px] py-2 underline">
                   Remove
                 </button>
               </div>
@@ -238,7 +238,7 @@ export function TributeEditor({
               </label>
               <input
                 id={`alt-${i}`}
-                className="w-full border-t border-evergreen-900/10 px-2 py-1 text-xs"
+                className="min-h-[44px] w-full border-t border-evergreen-900/10 px-3 py-2 text-sm"
                 placeholder="Describe this photo"
                 value={photo.altText}
                 onChange={(e) => updateAlt(i, e.target.value)}
@@ -305,7 +305,11 @@ export function TributeEditor({
                     onChange={(e) => updateTimelineEntry(i, { description: e.target.value })}
                   />
                 </div>
-                <button type="button" onClick={() => removeTimelineEntry(i)} className="text-sm underline">
+                <button
+                  type="button"
+                  onClick={() => removeTimelineEntry(i)}
+                  className="min-h-[44px] py-2 text-sm underline"
+                >
                   Remove this entry
                 </button>
               </div>
@@ -371,10 +375,15 @@ export function TributeEditor({
             Save and publish
           </button>
         )}
-        <a href={`/t/${page.slug}?preview=1`} target="_blank" rel="noreferrer" className="text-sm underline">
+        <a
+          href={`/t/${page.slug}?preview=1`}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex min-h-[44px] items-center text-sm underline"
+        >
           Preview before publishing
         </a>
-        <span role="status" aria-live="polite" className="text-sm text-evergreen-900/60">
+        <span role="status" aria-live="polite" className="text-sm text-evergreen-900/70">
           {status === "saving" && "Saving…"}
           {status === "saved" && "All changes saved."}
           {status === "error" && "Couldn't save — please try again."}

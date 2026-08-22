@@ -137,7 +137,7 @@ export default function OrderPage() {
             <button type="submit" disabled={loading} className="btn-primary w-full sm:w-auto">
               {loading ? "Redirecting to payment…" : `Continue to payment — £${PRICE}`}
             </button>
-            <p className="text-sm text-evergreen-900/60">
+            <p className="text-sm text-evergreen-900/70">
               You'll be taken to Stripe's secure checkout to complete payment.
             </p>
           </form>
