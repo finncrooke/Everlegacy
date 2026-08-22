@@ -1,15 +1,12 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function SiteHeader() {
   return (
     <header className="border-b border-white/10 bg-evergreen-950">
       <div className="container-page flex h-20 items-center justify-between">
-        <Link
-          href="/"
-          className="heading-caps text-cream-50 tracking-widest2"
-          aria-label="Everlegacy home"
-        >
-          Everlegacy
+        <Link href="/" aria-label="Everlegacy home" className="flex items-center">
+          <Image src="/brand/logo.png" alt="Everlegacy" width={168} height={94} className="h-9 w-auto" priority />
         </Link>
         <nav aria-label="Primary" className="flex items-center gap-6">
           <Link

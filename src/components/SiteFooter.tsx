@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function SiteFooter() {
@@ -5,7 +6,13 @@ export function SiteFooter() {
     <footer className="border-t border-white/10 bg-evergreen-950 py-12 text-cream-100/80">
       <div className="container-page flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
         <div>
-          <p className="heading-caps text-cream-50">Everlegacy</p>
+          <Image
+            src="/brand/logo.png"
+            alt="Everlegacy"
+            width={168}
+            height={94}
+            className="h-7 w-auto sm:mx-0 mx-auto"
+          />
           <p className="mt-2 text-sm">
             Contact us at{" "}
             <a href="mailto:support@everlegacy.co.uk" className="underline hover:text-gold-400">

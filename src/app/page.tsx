@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -67,24 +68,15 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          <div
-            className="flex aspect-square items-center justify-center rounded-2xl border border-white/10 bg-evergreen-900"
-            role="img"
-            aria-label="Illustration of a small bronze-coloured QR plaque mounted on a grey headstone, surrounded by soft grass"
-          >
-            <div className="flex flex-col items-center gap-4">
-              <div className="h-28 w-28 rounded-lg bg-gold-500/90 p-3">
-                <div className="grid h-full w-full grid-cols-4 grid-rows-4 gap-1">
-                  {Array.from({ length: 16 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={i % 3 === 0 ? "bg-evergreen-950 rounded-sm" : "bg-transparent"}
-                    />
-                  ))}
-                </div>
-              </div>
-              <p className="text-sm text-cream-100/70">Plaque preview</p>
-            </div>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
+            <Image
+              src="/brand/plaque-1.png"
+              alt="A gold QR plaque engraved and fitted onto a headstone, next to the dates and inscription"
+              fill
+              sizes="(min-width: 640px) 50vw, 100vw"
+              className="object-cover"
+              priority
+            />
           </div>
         </div>
       </section>
